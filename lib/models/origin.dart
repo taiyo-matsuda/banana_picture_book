@@ -1,5 +1,3 @@
-import 'dart:nativewrappers/_internal/vm/lib/ffi_native_type_patch.dart';
-
 class Origin {
   final int id;
   final int varietyId;
@@ -9,8 +7,8 @@ class Origin {
   final String? collectingSource;
   final String? localVernacularName;
   final String? accessionCode;
-  final Bool useForDessert;
-  final Bool useForCooking;
+  final bool useForDessert;
+  final bool useForCooking;
 
   const Origin({
     required this.id,
