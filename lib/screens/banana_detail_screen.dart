@@ -12,9 +12,14 @@ import './widgets/petiole_section.dart';
 import './widgets/plant_section.dart';
 
 class BananaDetailScreen extends StatefulWidget {
-  const BananaDetailScreen({super.key, required this.varietyId});
+  const BananaDetailScreen({
+    super.key,
+    required this.varietyId,
+    required this.canonicalName,
+  });
 
   final int varietyId;
+  final String? canonicalName;
 
   @override
   State<BananaDetailScreen> createState() => _BananaDetailScreenState();
@@ -36,7 +41,7 @@ class _BananaDetailScreenState extends State<BananaDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      headers: [AppBar(title: const Text('バナナ詳細'))],
+      headers: [AppBar(title: Text(widget.canonicalName ?? 'バナナ詳細'))],
       child: FutureBuilder<BananaDetail?>(
         future: _banana,
         builder: (context, snapshot) {
@@ -89,13 +94,6 @@ class BananaDetailContent extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  variety.canonicalName,
-                  style: const TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
                 const SizedBox(height: 4),
                 Text(
                   variety.musalogueName,

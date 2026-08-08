@@ -19,7 +19,7 @@ class FruitMapper {
       fruitPedicelLengthMax: (map['fruit_pedicel_length_max'] as num?)
           ?.toDouble(),
       maturePeelColour: map['mature_peel_colour'] as String?,
-      pulpPresence: map['pulp_presence'] as String?,
+      pulpPresence: map['pulp_presence'] as bool,
       pulpColourAtMaturity: map['pulp_colour_at_maturity'] as String?,
       seedsWithPollenSourceMin: map['seeds_with_pollen_source_min'] as int?,
       seedsWithPollenSourceMax: map['seeds_with_pollen_source_max'] as int?,

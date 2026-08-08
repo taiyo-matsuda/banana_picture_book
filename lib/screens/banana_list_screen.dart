@@ -59,7 +59,10 @@ class _BananaListScreenState extends State<BananaListScreen> {
                 child: _BananaCard(
                   banana: banana,
                   onTap: () {
-                    context.push('/bananas/${banana.variety.id}');
+                    context.push(
+                      '/bananas/${banana.variety.id}',
+                      extra: banana.variety.canonicalName,
+                    );
                   },
                 ),
               );

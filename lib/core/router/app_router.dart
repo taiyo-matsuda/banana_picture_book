@@ -17,8 +17,12 @@ GoRouter createAppRouter({required BriefBananaRepository repository}) {
         path: '/bananas/:varietyId',
         builder: (context, state) {
           final varietyId = int.parse(state.pathParameters['varietyId']!);
+          final canonicalName = state.extra as String?;
 
-          return BananaDetailScreen(varietyId: varietyId);
+          return BananaDetailScreen(
+            varietyId: varietyId,
+            canonicalName: canonicalName,
+          );
         },
       ),
     ],

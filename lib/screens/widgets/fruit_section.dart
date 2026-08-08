@@ -21,47 +21,38 @@ class FruitSection extends StatelessWidget {
     return DetailSection(
       title: 'Fruit',
       children: [
-        DetailRow(label: 'Fruit position', value: data.fruitPosition),
+        DetailRow(label: '果実の着生位置', value: data.fruitPosition),
         DetailRow(
-          label: 'Number of fruits',
+          label: '果実数',
           value: intRange(data.fruitsMin, data.fruitsMax),
         ),
         DetailRow(
-          label: 'Fruit length',
+          label: '果実長［cm］',
           value: range(data.fruitLengthMin, data.fruitLengthMax, suffix: ' cm'),
         ),
-        DetailRow(label: 'Fruit shape', value: data.fruitShape),
+        DetailRow(label: '果実形', value: data.fruitShape),
+        DetailRow(label: '果実の横断面', value: data.fruitTransverseSection),
+        DetailRow(label: '果実先端', value: data.fruitApex),
+        DetailRow(label: '果実先端に残る花器官', value: data.flowerRelictsAtApex),
         DetailRow(
-          label: 'Transverse section of fruit',
-          value: data.fruitTransverseSection,
-        ),
-        DetailRow(label: 'Fruit apex', value: data.fruitApex),
-        DetailRow(
-          label: 'Flower relicts at apex',
-          value: data.flowerRelictsAtApex,
-        ),
-        DetailRow(
-          label: 'Fruit pedicel length',
+          label: '果柄長［mm］',
           value: range(
             data.fruitPedicelLengthMin,
             data.fruitPedicelLengthMax,
             suffix: ' mm',
           ),
         ),
-        DetailRow(label: 'Mature peel colour', value: data.maturePeelColour),
-        DetailRow(label: 'Pulp', value: data.pulpPresence),
+        DetailRow(label: '成熟果皮色', value: data.maturePeelColour),
+        DetailRow(label: '果肉', value: data.pulpPresence.toString()),
+        DetailRow(label: '成熟時の果肉色', value: data.pulpColourAtMaturity),
         DetailRow(
-          label: 'Pulp colour at maturity',
-          value: data.pulpColourAtMaturity,
-        ),
-        DetailRow(
-          label: 'Seeds with pollen source',
+          label: '花粉源による種子形成',
           value: intRange(
             data.seedsWithPollenSourceMin,
             data.seedsWithPollenSourceMax,
           ),
         ),
-        DetailRow(label: 'Seed shape', value: data.seedShape),
+        DetailRow(label: '種子形', value: data.seedShape),
       ],
     );
   }

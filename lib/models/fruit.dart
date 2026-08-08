@@ -13,7 +13,7 @@ class Fruit {
   final double? fruitPedicelLengthMin;
   final double? fruitPedicelLengthMax;
   final String? maturePeelColour;
-  final String? pulpPresence;
+  final bool pulpPresence;
   final String? pulpColourAtMaturity;
   final int? seedsWithPollenSourceMin;
   final int? seedsWithPollenSourceMax;
@@ -34,7 +34,7 @@ class Fruit {
     this.fruitPedicelLengthMin,
     this.fruitPedicelLengthMax,
     this.maturePeelColour,
-    this.pulpPresence,
+    required this.pulpPresence,
     this.pulpColourAtMaturity,
     this.seedsWithPollenSourceMin,
     this.seedsWithPollenSourceMax,
