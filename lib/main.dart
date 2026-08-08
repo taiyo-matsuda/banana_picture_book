@@ -1,37 +1,32 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:shadcn_flutter/shadcn_flutter.dart';
+
+import 'repositories/brief_banana_repository.dart';
 import 'repositories/brief_banana_repository_imple.dart';
 import 'repositories/datasource/supabase/supabase_client.dart';
+import 'screens/banana_list_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await dotenv.load(fileName: ".env");
 
+  await dotenv.load(fileName: '.env');
   await SupabaseConfig.initialize();
 
   final repository = BriefBananaRepositoryImpl(SupabaseConfig.client);
 
-  final bananas = await repository.findAll();
-
-  debugPrint('件数: ${bananas.length}');
-
-  for (final banana in bananas.take(10)) {
-    debugPrint(
-      '${banana.variety.musalogueName} / '
-      '${banana.origin.origin}',
-    );
-  }
-
-  runApp(const BananaPictureBookApp());
+  runApp(BananaPictureBookApp(repository: repository));
 }
 
 class BananaPictureBookApp extends StatelessWidget {
-  const BananaPictureBookApp({super.key});
+  const BananaPictureBookApp({super.key, required this.repository});
+
+  final BriefBananaRepository repository;
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(body: Center(child: Text('Banana Picture Book'))),
+    return ShadcnApp(
+      title: 'Banana Picture Book',
+      home: BananaListScreen(repository: repository),
     );
   }
 }
