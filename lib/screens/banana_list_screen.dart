@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:shadcn_flutter/shadcn_flutter.dart';
 
 import '../models/brief_banana.dart';
 import '../repositories/brief_banana_repository.dart';
@@ -24,8 +25,8 @@ class _BananaListScreenState extends State<BananaListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('バナナ図鑑')),
-      body: FutureBuilder<List<BriefBanana>>(
+      headers: [AppBar(title: const Text('バナナ図鑑'))],
+      child: FutureBuilder<List<BriefBanana>>(
         future: _bananas,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
@@ -47,19 +48,21 @@ class _BananaListScreenState extends State<BananaListScreen> {
             return const Center(child: Text('バナナのデータがありません。'));
           }
 
-          return GridView.builder(
+          return ListView.builder(
             padding: const EdgeInsets.all(16),
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 1,
-              crossAxisSpacing: 12,
-              mainAxisSpacing: 12,
-              childAspectRatio: 0.8,
-            ),
             itemCount: bananas.length,
             itemBuilder: (context, index) {
               final banana = bananas[index];
 
-              return _BananaCard(banana: banana);
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: _BananaCard(
+                  banana: banana,
+                  onTap: () {
+                    context.push('/bananas/${banana.variety.id}');
+                  },
+                ),
+              );
             },
           );
         },
@@ -69,9 +72,10 @@ class _BananaListScreenState extends State<BananaListScreen> {
 }
 
 class _BananaCard extends StatelessWidget {
-  const _BananaCard({required this.banana});
+  const _BananaCard({required this.banana, required this.onTap});
 
   final BriefBanana banana;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -80,102 +84,102 @@ class _BananaCard extends StatelessWidget {
       if (banana.origin.useForCooking) '調理用',
     ].join(' · ');
 
-    return Card(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Container(
+    return GestureDetector(
+      onTap: onTap,
+      child: Card(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
               width: double.infinity,
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(12),
-                ),
-              ),
+              height: 280,
+              decoration: const BoxDecoration(color: Color(0xFFF3F4F6)),
               child: const Center(
                 child: Text('🍌', style: TextStyle(fontSize: 56)),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // 品種名
-                Text(
-                  banana.variety.canonicalName,
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
 
-                const SizedBox(height: 4),
-
-                // 学名
-                Text(
-                  banana.variety.musalogueName,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    fontSize: 16,
-                  ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-
-                const SizedBox(height: 12),
-
-                // ゲノムグループ / 用途
-                Row(
-                  children: [
-                    Text(
-                      'ゲノムグループ',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        fontSize: 13,
-                      ),
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    banana.variety.canonicalName,
+                    style: const TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
                     ),
-                    const SizedBox(width: 6),
-                    Text(
-                      banana.accession.species.name,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
 
-                    if (uses.isNotEmpty) ...[
-                      const SizedBox(width: 20),
-                      Text(
-                        '用途',
+                  const SizedBox(height: 4),
+
+                  Text(
+                    banana.variety.musalogueName,
+                    style: const TextStyle(
+                      color: Color(0xFF6B7280),
+                      fontSize: 16,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+
+                  const SizedBox(height: 12),
+
+                  Row(
+                    children: [
+                      const Text(
+                        'ゲノムグループ',
                         style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          color: Color(0xFF6B7280),
                           fontSize: 13,
                         ),
                       ),
+
                       const SizedBox(width: 6),
-                      Expanded(
-                        child: Text(
-                          uses,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+
+                      Text(
+                        banana.accession.species.name,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
+
+                      if (uses.isNotEmpty) ...[
+                        const SizedBox(width: 20),
+
+                        const Text(
+                          '用途',
+                          style: TextStyle(
+                            color: Color(0xFF6B7280),
+                            fontSize: 13,
+                          ),
+                        ),
+
+                        const SizedBox(width: 6),
+
+                        Expanded(
+                          child: Text(
+                            uses,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
                     ],
-                  ],
-                ),
-              ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

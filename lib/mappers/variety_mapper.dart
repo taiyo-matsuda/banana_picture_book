@@ -6,7 +6,7 @@ class VarietyMapper {
       id: map['id'] as int,
       musalogueName: map['musalogue_name'] as String,
       canonicalName: map['canonical_name'] as String,
-      thumbnailImageUrl: map['thumnail_image_url'] as String?,
+      thumbnailImageUrl: map['thumbnail_image_url'] as String?,
     );
   }
 }

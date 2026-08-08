@@ -1,10 +1,10 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shadcn_flutter/shadcn_flutter.dart';
 
-import 'repositories/brief_banana_repository.dart';
+import 'core/router/app_router.dart';
 import 'repositories/brief_banana_repository_imple.dart';
 import 'repositories/datasource/supabase/supabase_client.dart';
-import 'screens/banana_list_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,19 +14,21 @@ Future<void> main() async {
 
   final repository = BriefBananaRepositoryImpl(SupabaseConfig.client);
 
-  runApp(BananaPictureBookApp(repository: repository));
+  final router = createAppRouter(repository: repository);
+
+  runApp(BananaPictureBookApp(routerConfig: router));
 }
 
 class BananaPictureBookApp extends StatelessWidget {
-  const BananaPictureBookApp({super.key, required this.repository});
+  const BananaPictureBookApp({super.key, required this.routerConfig});
 
-  final BriefBananaRepository repository;
+  final GoRouter routerConfig;
 
   @override
   Widget build(BuildContext context) {
-    return ShadcnApp(
+    return ShadcnApp.router(
       title: 'Banana Picture Book',
-      home: BananaListScreen(repository: repository),
+      routerConfig: routerConfig,
     );
   }
 }
