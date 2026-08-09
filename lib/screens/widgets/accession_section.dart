@@ -1,7 +1,6 @@
 import 'package:shadcn_flutter/shadcn_flutter.dart';
 
 import '../../models/accession.dart';
-import '../../models/banana_detail.dart';
 import 'banana_detail_info_row.dart';
 import 'detail_section.dart';
 

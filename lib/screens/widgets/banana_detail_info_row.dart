@@ -8,10 +8,14 @@ class BananaDetailInfoRow extends StatelessWidget {
   });
 
   final String label;
-  final String value;
+  final String? value;
 
   @override
   Widget build(BuildContext context) {
+    if (value == null || value!.trim().isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
@@ -29,7 +33,7 @@ class BananaDetailInfoRow extends StatelessWidget {
           const SizedBox(width: 16),
           Expanded(
             child: Text(
-              value,
+              value!,
               textAlign: TextAlign.right,
               style: const TextStyle(fontSize: 15),
             ),

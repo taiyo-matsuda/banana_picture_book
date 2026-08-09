@@ -1,9 +1,9 @@
+import 'package:banana_picture_book/screens/widgets/origin_section.dart';
 import 'package:shadcn_flutter/shadcn_flutter.dart';
 
 import '../../models/banana_detail.dart';
 import 'accession_section.dart';
 import 'banana_detail_image_area.dart';
-import 'banana_detail_info_row.dart';
 import 'complementary_section.dart';
 import 'fruit_section.dart';
 import 'inflorescence_section.dart';
@@ -19,7 +19,6 @@ class BananaDetailContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final variety = banana.variety;
-    final accession = banana.accession;
 
     return SingleChildScrollView(
       child: Column(
@@ -42,6 +41,8 @@ class BananaDetailContent extends StatelessWidget {
                 ),
 
                 AccessionSection(accession: banana.accession),
+
+                OriginSection(origin: banana.origin),
 
                 PlantSection(plantTrait: banana.plantTrait),
 
