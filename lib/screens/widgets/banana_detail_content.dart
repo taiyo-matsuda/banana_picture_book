@@ -1,6 +1,7 @@
 import 'package:shadcn_flutter/shadcn_flutter.dart';
 
 import '../../models/banana_detail.dart';
+import 'accession_section.dart';
 import 'banana_detail_image_area.dart';
 import 'banana_detail_info_row.dart';
 import 'complementary_section.dart';
@@ -40,26 +41,7 @@ class BananaDetailContent extends StatelessWidget {
                   ),
                 ),
 
-                const SizedBox(height: 20),
-
-                BananaDetailInfoRow(
-                  label: 'ゲノムグループ',
-                  value: accession.species.name,
-                ),
-
-                if (banana.origin.localVernacularName != null)
-                  BananaDetailInfoRow(
-                    label: '現地名',
-                    value: banana.origin.localVernacularName!,
-                  ),
-
-                if (banana.origin.origin != null)
-                  BananaDetailInfoRow(
-                    label: '原産地',
-                    value: banana.origin.origin!,
-                  ),
-
-                const SizedBox(height: 24),
+                AccessionSection(accession: banana.accession),
 
                 PlantSection(plantTrait: banana.plantTrait),
 
