@@ -19,7 +19,7 @@ class FruitSection extends StatelessWidget {
     final data = fruit!;
 
     return DetailSection(
-      title: 'Fruit',
+      title: '果実',
       children: [
         DetailRow(label: '果実の着生位置', value: data.fruitPosition),
         DetailRow(

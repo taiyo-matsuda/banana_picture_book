@@ -18,24 +18,12 @@ class PetioleSection extends StatelessWidget {
     final data = leaf!;
 
     return DetailSection(
-      title: 'Petiole / Midrib / Leaf',
+      title: '葉柄・中肋・葉',
       children: [
-        DetailRow(
-          label: 'Petiole canal leaf III',
-          value: data.petioleCanalLeafIii,
-        ),
-        DetailRow(
-          label: 'Colour of midrib dorsal surface',
-          value: data.midribDorsalSurfaceColour,
-        ),
-        DetailRow(
-          label: 'Colour of cigar leaf dorsal surface',
-          value: data.cigarLeafDorsalSurfaceColour,
-        ),
-        DetailRow(
-          label: 'Blotches on leaves of water suckers',
-          value: data.waterSuckersLeafBlotches,
-        ),
+        DetailRow(label: '葉柄の溝（第3葉）', value: data.petioleCanalLeafIii),
+        DetailRow(label: '中肋背面の色', value: data.midribDorsalSurfaceColour),
+        DetailRow(label: '葉巻葉背面の色', value: data.cigarLeafDorsalSurfaceColour),
+        DetailRow(label: '水吸芽の葉の斑点', value: data.waterSuckersLeafBlotches),
       ],
     );
   }

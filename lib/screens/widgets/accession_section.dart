@@ -12,18 +12,15 @@ class AccessionSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DetailSection(
-      title: 'Accession',
+      title: '分類情報',
       children: [
         BananaDetailInfoRow(
-          label: 'MGIS accession number',
+          label: 'MGIS番号',
           value: accession.mgisAccessionNumber,
         ),
-        BananaDetailInfoRow(label: 'Genus', value: accession.genus),
-        BananaDetailInfoRow(label: 'Species', value: accession.species.name),
-        BananaDetailInfoRow(
-          label: 'Subspecies',
-          value: accession.subspecies.name,
-        ),
+        BananaDetailInfoRow(label: '属', value: accession.genus),
+        BananaDetailInfoRow(label: '種', value: accession.species.name),
+        BananaDetailInfoRow(label: '亜種', value: accession.subspecies.name),
       ],
     );
   }

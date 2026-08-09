@@ -18,28 +18,16 @@ class MaleFlowerSection extends StatelessWidget {
     final data = maleFlower!;
 
     return DetailSection(
-      title: 'Male flower',
+      title: '雄花',
       children: [
-        DetailRow(
-          label: 'Compound tepal basic colour',
-          value: data.compoundTepalBasicColour,
-        ),
-        DetailRow(
-          label: 'Compound tepal pigmentation',
-          value: data.compoundTepalPigmentation,
-        ),
-        DetailRow(
-          label: 'Lobe colour of compound tepal',
-          value: data.compoundTepalLobeColour,
-        ),
-        DetailRow(
-          label: 'Free tepal appearance',
-          value: data.freeTepalAppearance,
-        ),
-        DetailRow(label: 'Style shape', value: data.styleShape),
-        DetailRow(label: 'Stigma colour', value: data.stigmaColour),
-        DetailRow(label: 'Ovary basic colour', value: data.ovaryBasicColour),
-        DetailRow(label: 'Ovary pigmentation', value: data.ovaryPigmentation),
+        DetailRow(label: '複合花被の基本色', value: data.compoundTepalBasicColour),
+        DetailRow(label: '複合花被の着色', value: data.compoundTepalPigmentation),
+        DetailRow(label: '複合花被の裂片の色', value: data.compoundTepalLobeColour),
+        DetailRow(label: '離生花被の外観', value: data.freeTepalAppearance),
+        DetailRow(label: '花柱の形状', value: data.styleShape),
+        DetailRow(label: '柱頭の色', value: data.stigmaColour),
+        DetailRow(label: '子房の基本色', value: data.ovaryBasicColour),
+        DetailRow(label: '子房の着色', value: data.ovaryPigmentation),
       ],
     );
   }

@@ -17,27 +17,15 @@ class OriginSection extends StatelessWidget {
     ].join(' · ');
 
     return DetailSection(
-      title: 'Origin',
+      title: '原産地情報',
       children: [
-        BananaDetailInfoRow(label: 'Origin', value: origin.origin),
-        BananaDetailInfoRow(label: 'Province', value: origin.province),
-        BananaDetailInfoRow(
-          label: 'Exact location',
-          value: origin.exactLocation,
-        ),
-        BananaDetailInfoRow(
-          label: 'Collecting source',
-          value: origin.collectingSource,
-        ),
-        BananaDetailInfoRow(
-          label: 'Local vernacular name',
-          value: origin.localVernacularName,
-        ),
-        BananaDetailInfoRow(
-          label: 'Accession code',
-          value: origin.accessionCode,
-        ),
-        BananaDetailInfoRow(label: 'Use', value: uses.isEmpty ? null : uses),
+        BananaDetailInfoRow(label: '原産地', value: origin.origin),
+        BananaDetailInfoRow(label: '州・県', value: origin.province),
+        BananaDetailInfoRow(label: '詳細な採集地', value: origin.exactLocation),
+        BananaDetailInfoRow(label: '採集元', value: origin.collectingSource),
+        BananaDetailInfoRow(label: '現地名', value: origin.localVernacularName),
+        BananaDetailInfoRow(label: '識別番号', value: origin.accessionCode),
+        BananaDetailInfoRow(label: '用途', value: uses.isEmpty ? null : uses),
       ],
     );
   }

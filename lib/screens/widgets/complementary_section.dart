@@ -15,7 +15,7 @@ class ComplementarySection extends StatelessWidget {
     }
 
     return DetailSection(
-      title: 'Complementary',
+      title: '補足',
       children: items
           .map<Widget>(
             (item) => Padding(
