@@ -5,26 +5,42 @@ class IdentifyBottomAction extends StatelessWidget {
     super.key,
     required this.enabled,
     required this.onPressed,
-    this.label = '次へ',
+    this.onBack,
   });
 
   final bool enabled;
   final VoidCallback onPressed;
-  final String label;
+  final VoidCallback? onBack;
 
   @override
   Widget build(BuildContext context) {
+    final hasBackButton = onBack != null;
+
     return Container(
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 20),
       decoration: const BoxDecoration(
         border: Border(top: BorderSide(color: Color(0xFFE5E7EB))),
       ),
-      child: SizedBox(
-        width: double.infinity,
-        child: PrimaryButton(
-          onPressed: enabled ? onPressed : null,
-          child: Text(label),
-        ),
+      child: Row(
+        children: [
+          if (hasBackButton) ...[
+            Expanded(
+              child: Button(
+                style: ButtonStyle(variance: ButtonVariance.outline),
+                onPressed: onBack,
+                child: const Text('戻る'),
+              ),
+            ),
+            const SizedBox(width: 12),
+          ],
+          Expanded(
+            child: Button(
+              style: ButtonStyle(variance: ButtonVariance.primary),
+              onPressed: enabled ? onPressed : null,
+              child: const Text('次へ'),
+            ),
+          ),
+        ],
       ),
     );
   }

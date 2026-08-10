@@ -3,28 +3,28 @@ import 'package:go_router/go_router.dart';
 import 'package:shadcn_flutter/shadcn_flutter.dart';
 
 import '../../models/identification_answer.dart';
-import '../../models/plant_height.dart';
+import '../../models/peel_colour.dart';
 import '../../repositories/identification_repository.dart';
 import '../../services/identification_session.dart';
 import 'widgets/identify/identify_answer_card.dart';
 import 'widgets/identify/identify_bottom_action.dart';
 import 'widgets/identify/identify_progress_header.dart';
 
-class IdentifyHeightScreen extends StatefulWidget {
-  const IdentifyHeightScreen({super.key});
+class IdentifyPeelScreen extends StatefulWidget {
+  const IdentifyPeelScreen({super.key});
 
   @override
-  State<IdentifyHeightScreen> createState() => _IdentifyHeightScreenState();
+  State<IdentifyPeelScreen> createState() => _IdentifyPeelScreenState();
 }
 
-class _IdentifyHeightScreenState extends State<IdentifyHeightScreen> {
+class _IdentifyPeelScreenState extends State<IdentifyPeelScreen> {
   final _repository = GetIt.instance<IdentificationRepository>();
 
   final _session = GetIt.instance<IdentificationSession>();
 
-  HeightAnswer? _selectedAnswer;
+  PeelColourAnswer? _selectedAnswer;
 
-  List<PlantHeight> _plantHeights = [];
+  List<PeelColour> _peelColours = [];
 
   bool _isLoading = true;
   String? _errorMessage;
@@ -33,21 +33,21 @@ class _IdentifyHeightScreenState extends State<IdentifyHeightScreen> {
   void initState() {
     super.initState();
 
-    _selectedAnswer = _session.q1Height;
+    _selectedAnswer = _session.q2PeelColour;
 
-    _loadPlantHeights();
+    _loadPeelColours();
   }
 
-  Future<void> _loadPlantHeights() async {
+  Future<void> _loadPeelColours() async {
     try {
-      final heights = await _repository.findPlantHeights();
+      final colours = await _repository.findPeelColours();
 
       if (!mounted) {
         return;
       }
 
       setState(() {
-        _plantHeights = heights;
+        _peelColours = colours;
         _isLoading = false;
       });
     } catch (e) {
@@ -62,44 +62,21 @@ class _IdentifyHeightScreenState extends State<IdentifyHeightScreen> {
     }
   }
 
-  bool _hasLowHeight(List<PlantHeight> heights) {
-    return heights.any((height) {
-      if (height.min == null && height.max == null) {
-        return false;
-      }
-
-      final min = height.min ?? height.max!;
-
-      return min <= 2.0;
-    });
+  bool _hasYellow(List<PeelColour> colours) {
+    return colours.any(
+      (colour) => colour.value == '黄色' || colour.value == '鮮黄色',
+    );
   }
 
-  bool _hasMidHeight(List<PlantHeight> heights) {
-    return heights.any((height) {
-      if (height.min == null && height.max == null) {
-        return false;
-      }
-
-      final min = height.min ?? height.max!;
-      final max = height.max ?? height.min!;
-
-      return min <= 2.9 && max >= 2.1;
-    });
+  bool _hasOrange(List<PeelColour> colours) {
+    return colours.any((colour) => colour.value == 'オレンジ色');
   }
 
-  bool _hasHighHeight(List<PlantHeight> heights) {
-    return heights.any((height) {
-      if (height.min == null && height.max == null) {
-        return false;
-      }
-
-      final max = height.max ?? height.min!;
-
-      return max >= 3.0;
-    });
+  bool _hasBlue(List<PeelColour> colours) {
+    return colours.any((colour) => colour.value == '青みがかった色');
   }
 
-  void _selectAnswer(HeightAnswer answer) {
+  void _selectAnswer(PeelColourAnswer answer) {
     setState(() {
       _selectedAnswer = answer;
     });
@@ -110,9 +87,9 @@ class _IdentifyHeightScreenState extends State<IdentifyHeightScreen> {
       return;
     }
 
-    debugPrint('Q1 answer: $_selectedAnswer');
+    _session.q2PeelColour = _selectedAnswer;
 
-    context.push('/identify/peel-colour');
+    // TODO: Q3へ
   }
 
   @override
@@ -122,10 +99,10 @@ class _IdentifyHeightScreenState extends State<IdentifyHeightScreen> {
         AppBar(
           title: const Text('バナナの品種特定'),
           leading: [
-            Button(
-              style: ButtonStyle(variance: ButtonVariance.ghost),
+            IconButton(
+              variance: ButtonVariance.ghost,
               onPressed: () => context.pop(),
-              child: const Icon(Icons.arrow_back),
+              icon: const Icon(Icons.arrow_back),
             ),
           ],
         ),
@@ -133,7 +110,7 @@ class _IdentifyHeightScreenState extends State<IdentifyHeightScreen> {
       child: SafeArea(
         child: Column(
           children: [
-            const IdentifyProgressHeader(currentStep: 1, totalSteps: 8),
+            const IdentifyProgressHeader(currentStep: 2, totalSteps: 8),
 
             Expanded(child: _buildContent()),
 
@@ -162,7 +139,7 @@ class _IdentifyHeightScreenState extends State<IdentifyHeightScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            '株（木）の高さはどのくらいですか？',
+            '熟した果皮の色は何色ですか？',
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w700,
@@ -173,7 +150,7 @@ class _IdentifyHeightScreenState extends State<IdentifyHeightScreen> {
           const SizedBox(height: 12),
 
           const Text(
-            'バナナの株全体のおおよその高さを選んでください。',
+            '熟したバナナの皮の色を選んでください。',
             style: TextStyle(
               fontSize: 15,
               color: Color(0xFF71717A),
@@ -183,41 +160,41 @@ class _IdentifyHeightScreenState extends State<IdentifyHeightScreen> {
 
           const SizedBox(height: 32),
 
-          if (_hasLowHeight(_plantHeights)) ...[
+          if (_hasYellow(_peelColours)) ...[
             IdentifyAnswerCard(
-              title: '低い',
-              subtitle: '2.0m以下',
-              selected: _selectedAnswer == HeightAnswer.low,
-              onTap: () => _selectAnswer(HeightAnswer.low),
+              title: '黄色 / 鮮黄色',
+              subtitle: '熟すと黄色になる',
+              selected: _selectedAnswer == PeelColourAnswer.yellow,
+              onTap: () => _selectAnswer(PeelColourAnswer.yellow),
             ),
             const SizedBox(height: 12),
           ],
 
-          if (_hasMidHeight(_plantHeights)) ...[
+          if (_hasOrange(_peelColours)) ...[
             IdentifyAnswerCard(
-              title: '中程度',
-              subtitle: '2.1〜2.9m',
-              selected: _selectedAnswer == HeightAnswer.mid,
-              onTap: () => _selectAnswer(HeightAnswer.mid),
+              title: 'オレンジ色',
+              subtitle: '熟すとオレンジ色になる',
+              selected: _selectedAnswer == PeelColourAnswer.orange,
+              onTap: () => _selectAnswer(PeelColourAnswer.orange),
             ),
             const SizedBox(height: 12),
           ],
 
-          if (_hasHighHeight(_plantHeights)) ...[
+          if (_hasBlue(_peelColours)) ...[
             IdentifyAnswerCard(
-              title: '高い',
-              subtitle: '3.0m以上',
-              selected: _selectedAnswer == HeightAnswer.high,
-              onTap: () => _selectAnswer(HeightAnswer.high),
+              title: '青みがかった色',
+              subtitle: '熟しても青みが残る',
+              selected: _selectedAnswer == PeelColourAnswer.blue,
+              onTap: () => _selectAnswer(PeelColourAnswer.blue),
             ),
             const SizedBox(height: 12),
           ],
 
           IdentifyAnswerCard(
             title: '不明 / スキップ',
-            subtitle: '高さが分からない場合',
-            selected: _selectedAnswer == HeightAnswer.unknown,
-            onTap: () => _selectAnswer(HeightAnswer.unknown),
+            subtitle: '色が分からない場合',
+            selected: _selectedAnswer == PeelColourAnswer.unknown,
+            onTap: () => _selectAnswer(PeelColourAnswer.unknown),
           ),
         ],
       ),
