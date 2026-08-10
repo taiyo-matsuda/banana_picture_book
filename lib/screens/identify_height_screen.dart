@@ -28,21 +28,42 @@ class _IdentifyHeightScreenState extends State<IdentifyHeightScreen> {
   }
 
   bool _hasLowHeight(List<PlantHeight> heights) {
-    return heights.any((height) => height.min != null && height.min! <= 2.0);
+    return heights.any((height) {
+      if (height.min == null && height.max == null) {
+        return false;
+      }
+
+      final min = height.min ?? height.max!;
+      final max = height.max ?? height.min!;
+
+      return min <= 2.0;
+    });
   }
 
   bool _hasMidHeight(List<PlantHeight> heights) {
-    return heights.any(
-      (height) =>
-          height.min != null &&
-          height.max != null &&
-          height.min! <= 2.9 &&
-          height.max! >= 2.1,
-    );
+    return heights.any((height) {
+      if (height.min == null && height.max == null) {
+        return false;
+      }
+
+      final min = height.min ?? height.max!;
+      final max = height.max ?? height.min!;
+
+      return min <= 2.9 && max >= 2.1;
+    });
   }
 
   bool _hasHighHeight(List<PlantHeight> heights) {
-    return heights.any((height) => height.max != null && height.max! >= 3.0);
+    return heights.any((height) {
+      if (height.min == null && height.max == null) {
+        return false;
+      }
+
+      final min = height.min ?? height.max!;
+      final max = height.max ?? height.min!;
+
+      return max >= 3.0;
+    });
   }
 
   void _selectAnswer(HeightAnswer answer) {

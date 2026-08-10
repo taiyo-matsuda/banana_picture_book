@@ -1,6 +1,8 @@
 import 'package:go_router/go_router.dart';
 import 'package:shadcn_flutter/shadcn_flutter.dart';
 
+import 'widgets/identify/identification_feature_row.dart';
+
 class IdentifyScreen extends StatelessWidget {
   const IdentifyScreen({super.key});
 
@@ -62,19 +64,19 @@ class IdentifyScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 16),
-                      _FeatureRow(
+                      IdentificationFeatureRow(
                         number: '1',
                         title: '8つの質問に回答',
                         description: '分かる範囲で特徴を選択します。',
                       ),
                       const SizedBox(height: 16),
-                      _FeatureRow(
+                      IdentificationFeatureRow(
                         number: '2',
                         title: '品種を照合',
                         description: 'データベースの品種情報と照合します。',
                       ),
                       const SizedBox(height: 16),
-                      _FeatureRow(
+                      IdentificationFeatureRow(
                         number: '3',
                         title: '候補を表示',
                         description: '一致度の高い品種を候補として表示します。',
@@ -100,64 +102,6 @@ class IdentifyScreen extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-class _FeatureRow extends StatelessWidget {
-  const _FeatureRow({
-    required this.number,
-    required this.title,
-    required this.description,
-  });
-
-  final String number;
-  final String title;
-  final String description;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          width: 28,
-          height: 28,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: const Color(0xFFF4F4F5),
-            borderRadius: BorderRadius.circular(14),
-          ),
-          child: Text(
-            number,
-            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                description,
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: Color(0xFF71717A),
-                  height: 1.4,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
     );
   }
 }
