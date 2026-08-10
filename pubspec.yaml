@@ -39,6 +39,7 @@ dependencies:
   supabase_flutter: ^2.17.1
   flutter_dotenv: ^6.0.1
   shadcn_flutter: ^0.0.53
+  get_it: ^9.2.1
 
 dev_dependencies:
   flutter_test:
