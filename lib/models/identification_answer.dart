@@ -23,3 +23,5 @@ enum PeduncleHairinessAnswer {
   veryHairyShort,
   unknown,
 }
+
+enum SapColourAnswer { milkyWhite, watery, unknown }

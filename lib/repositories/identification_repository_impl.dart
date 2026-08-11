@@ -9,6 +9,7 @@ import '../models/fruit_transverse_section.dart';
 import '../models/peduncle_hairiness.dart';
 import '../models/peel_colour.dart';
 import '../models/pulp_colour.dart';
+import '../models/sap_colour.dart';
 
 class IdentificationRepositoryImpl implements IdentificationRepository {
   IdentificationRepositoryImpl(this.supabase);
@@ -97,5 +98,15 @@ class IdentificationRepositoryImpl implements IdentificationRepository {
     return response
         .map<PeduncleHairiness>((data) => PeduncleHairiness.fromMap(data))
         .toList();
+  }
+
+  @override
+  Future<List<SapColour>> findSapColours() async {
+    final response = await supabase
+        .from('plant_traits')
+        .select('sap_colour')
+        .not('sap_colour', 'is', null);
+
+    return response.map<SapColour>((data) => SapColour.fromMap(data)).toList();
   }
 }

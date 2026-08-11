@@ -6,6 +6,7 @@ import '../models/fruit_transverse_section.dart';
 import '../models/peduncle_hairiness.dart';
 import '../models/peel_colour.dart';
 import '../models/pulp_colour.dart';
+import '../models/sap_colour.dart';
 
 abstract class IdentificationRepository {
   Future<List<PlantHeight>> findPlantHeights();
@@ -21,4 +22,6 @@ abstract class IdentificationRepository {
   Future<List<FruitTransverseSection>> findFruitTransverseSections();
 
   Future<List<PeduncleHairiness>> findPeduncleHairiness();
+
+  Future<List<SapColour>> findSapColours();
 }
