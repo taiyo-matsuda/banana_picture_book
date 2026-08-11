@@ -3,41 +3,88 @@ import 'package:go_router/go_router.dart';
 import 'package:shadcn_flutter/shadcn_flutter.dart';
 
 import '../models/identification_result.dart';
+import '../repositories/identification_repository.dart';
 import '../services/identification_scorer.dart';
 import '../services/identification_session.dart';
 
-class IdentifyResultScreen extends StatelessWidget {
+class IdentifyResultScreen extends StatefulWidget {
   const IdentifyResultScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final session = GetIt.instance<IdentificationSession>();
+  State<IdentifyResultScreen> createState() => _IdentifyResultScreenState();
+}
 
-    final scorer = GetIt.instance<IdentificationScorer>();
+class _IdentifyResultScreenState extends State<IdentifyResultScreen> {
+  final _repository = GetIt.instance<IdentificationRepository>();
 
-    final candidates = GetIt.instance<IdentificationCandidates>();
+  final _session = GetIt.instance<IdentificationSession>();
 
-    final results = scorer.score(
-      session: session,
-      candidates: candidates.items,
-    );
+  final _scorer = GetIt.instance<IdentificationScorer>();
 
-    return Scaffold(
-      headers: [AppBar(title: const Text('特定結果'))],
-      child: SafeArea(child: _buildContent(context, results)),
-    );
+  late Future<List<IdentificationResult>> _results;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _results = _loadResults();
   }
 
-  Widget _buildContent(
-    BuildContext context,
-    List<IdentificationResult> results,
-  ) {
-    if (results.isEmpty) {
-      return const Center(child: Text('候補となる品種がありません。'));
-    }
+  Future<List<IdentificationResult>> _loadResults() async {
+    final candidates = await _repository.findCandidates();
+
+    return _scorer.score(session: _session, candidates: candidates);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      headers: [AppBar(title: const Text('特定結果'))],
+      child: SafeArea(
+        child: FutureBuilder<List<IdentificationResult>>(
+          future: _results,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            if (snapshot.hasError) {
+              return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Text(
+                    '結果の取得に失敗しました。\n${snapshot.error}',
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              );
+            }
+
+            final results = snapshot.data ?? [];
+
+            if (results.isEmpty) {
+              return const Center(child: Text('候補となる品種がありません。'));
+            }
+
+            return _ResultContent(results: results);
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _ResultContent extends StatelessWidget {
+  const _ResultContent({required this.results});
+
+  final List<IdentificationResult> results;
+
+  @override
+  Widget build(BuildContext context) {
+    final topResults = results.take(5).toList();
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.fromLTRB(20, 24, 20, 40),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -50,31 +97,35 @@ class IdentifyResultScreen extends StatelessWidget {
 
           const Text(
             '回答した特徴との一致度が高い順に表示しています。',
-            style: TextStyle(fontSize: 15, color: Color(0xFF71717A)),
+            style: TextStyle(
+              fontSize: 15,
+              color: Color(0xFF71717A),
+              height: 1.5,
+            ),
           ),
 
           const SizedBox(height: 28),
 
-          ...results
-              .take(5)
-              .map(
-                (result) => Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: _ResultCard(
-                    result: result,
-                    rank: results.indexOf(result) + 1,
-                  ),
-                ),
-              ),
+          ...List.generate(topResults.length, (index) {
+            final result = topResults[index];
+
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: _ResultCard(result: result, rank: index + 1),
+            );
+          }),
 
           const SizedBox(height: 20),
 
-          Button(
-            style: const ButtonStyle(variance: ButtonVariance.outline),
-            onPressed: () {
-              context.go('/identify');
-            },
-            child: const Text('もう一度特定する'),
+          SizedBox(
+            width: double.infinity,
+            child: Button(
+              style: const ButtonStyle(variance: ButtonVariance.outline),
+              onPressed: () {
+                context.go('/identify');
+              },
+              child: const Text('もう一度特定する'),
+            ),
           ),
         ],
       ),
@@ -90,7 +141,7 @@ class _ResultCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final banana = result.candidate;
+    final candidate = result.candidate;
 
     return Card(
       child: Padding(
@@ -108,7 +159,10 @@ class _ResultCard extends StatelessWidget {
               ),
               child: Text(
                 '$rank',
-                style: const TextStyle(fontWeight: FontWeight.w700),
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
             ),
 
@@ -119,17 +173,17 @@ class _ResultCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    banana.canonicalName,
+                    candidate.canonicalName,
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
 
-                  if (banana.musalogueName != null) ...[
+                  if (candidate.musalogueName != null) ...[
                     const SizedBox(height: 4),
                     Text(
-                      banana.musalogueName!,
+                      candidate.musalogueName!,
                       style: const TextStyle(
                         fontSize: 14,
                         color: Color(0xFF71717A),

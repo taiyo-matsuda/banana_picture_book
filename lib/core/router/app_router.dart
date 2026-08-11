@@ -10,6 +10,7 @@ import '../../screens/identify_height_screen.dart';
 import '../../screens/identify_peduncle_hairiness_screen.dart';
 import '../../screens/identify_peel_screen.dart';
 import '../../screens/identify_pulp_screen.dart';
+import '../../screens/identify_result_screen.dart';
 import '../../screens/identify_sap_colour_screen.dart';
 import '../../screens/identify_screen.dart';
 import '../di/injection.dart';
@@ -110,14 +111,12 @@ GoRouter createAppRouter() {
                     builder: (context, state) {
                       return const IdentifySapColourScreen();
                     },
-                    // routes: [
-                    //   GoRoute(
-                    //     path: 'result',
-                    //     builder: (context, state) {
-                    //       return const IdentifyResultScreen();
-                    //     },
-                    //   ),
-                    // ],
+                  ),
+                  GoRoute(
+                    path: 'result',
+                    builder: (context, state) {
+                      return const IdentifyResultScreen();
+                    },
                   ),
                 ],
               ),

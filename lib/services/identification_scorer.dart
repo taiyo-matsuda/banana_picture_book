@@ -9,10 +9,9 @@ class IdentificationScorer {
     required List<IdentificationCandidate> candidates,
   }) {
     final results = candidates.map((candidate) {
-      int score = 0;
-      int answeredCount = 0;
+      var score = 0;
+      var answeredCount = 0;
 
-      // Q1 高さ
       if (session.q1Height != null &&
           session.q1Height != HeightAnswer.unknown) {
         answeredCount++;
@@ -26,7 +25,6 @@ class IdentificationScorer {
         }
       }
 
-      // Q2 果皮色
       if (session.q2PeelColour != null &&
           session.q2PeelColour != PeelColourAnswer.unknown) {
         answeredCount++;
@@ -36,7 +34,6 @@ class IdentificationScorer {
         }
       }
 
-      // Q3 果肉色
       if (session.q3PulpColour != null &&
           session.q3PulpColour != PulpColourAnswer.unknown) {
         answeredCount++;
@@ -46,7 +43,6 @@ class IdentificationScorer {
         }
       }
 
-      // Q4 果実先端
       if (session.q4FruitApex != null &&
           session.q4FruitApex != FruitApexAnswer.unknown) {
         answeredCount++;
@@ -56,7 +52,6 @@ class IdentificationScorer {
         }
       }
 
-      // Q5 果実長
       if (session.q5FruitLength != null &&
           session.q5FruitLength != FruitLengthAnswer.unknown) {
         answeredCount++;
@@ -70,7 +65,6 @@ class IdentificationScorer {
         }
       }
 
-      // Q6 横断面
       if (session.q6FruitTransverseSection != null &&
           session.q6FruitTransverseSection !=
               FruitTransverseSectionAnswer.unknown) {
@@ -84,7 +78,6 @@ class IdentificationScorer {
         }
       }
 
-      // Q7 果軸の毛
       if (session.q7PeduncleHairiness != null &&
           session.q7PeduncleHairiness != PeduncleHairinessAnswer.unknown) {
         answeredCount++;
@@ -97,7 +90,6 @@ class IdentificationScorer {
         }
       }
 
-      // Q8 樹液
       if (session.q8SapColour != null &&
           session.q8SapColour != SapColourAnswer.unknown) {
         answeredCount++;
@@ -107,47 +99,56 @@ class IdentificationScorer {
         }
       }
 
-      final maxScore = answeredCount * 2;
-
       return IdentificationResult(
         candidate: candidate,
         score: score,
-        maxScore: maxScore,
+        maxScore: answeredCount * 2,
       );
     }).toList();
 
-    results.sort((a, b) => b.score.compareTo(a.score));
+    results.sort((a, b) {
+      final rateCompare = b.matchRate.compareTo(a.matchRate);
+
+      if (rateCompare != 0) {
+        return rateCompare;
+      }
+
+      return b.score.compareTo(a.score);
+    });
 
     return results;
   }
 
   bool _matchesHeight(HeightAnswer answer, double? min, double? max) {
-    if (answer == HeightAnswer.low) {
-      return max != null && max <= 2.0;
-    }
-
-    if (answer == HeightAnswer.mid) {
-      return min != null && max != null && min <= 2.9 && max >= 2.1;
-    }
-
-    if (answer == HeightAnswer.high) {
-      return min != null && min >= 3.0;
-    }
-
-    return false;
-  }
-
-  bool _matchesPeelColour(PeelColourAnswer answer, String? value) {
-    if (value == null) {
+    if (min == null && max == null) {
       return false;
     }
 
     switch (answer) {
+      case HeightAnswer.low:
+        return min != null && min <= 2.0;
+
+      case HeightAnswer.mid:
+        return min != null && max != null && min <= 2.9 && max >= 2.1;
+
+      case HeightAnswer.high:
+        return max != null && max >= 3.0;
+
+      case HeightAnswer.unknown:
+        return false;
+    }
+  }
+
+  bool _matchesPeelColour(PeelColourAnswer answer, String? value) {
+    switch (answer) {
       case PeelColourAnswer.yellow:
-        return value == 'yellow' || value == 'bright_yellow';
+        return value == 'yellow' ||
+            value == 'bright_yellow' ||
+            value == '黄色' ||
+            value == '鮮黄色';
 
       case PeelColourAnswer.orange:
-        return value == 'orange';
+        return value == 'orange' || value == 'オレンジ色';
 
       case PeelColourAnswer.blue:
         return value == 'bluish';
@@ -158,10 +159,6 @@ class IdentificationScorer {
   }
 
   bool _matchesPulpColour(PulpColourAnswer answer, String? value) {
-    if (value == null) {
-      return false;
-    }
-
     switch (answer) {
       case PulpColourAnswer.ivory:
         return value == 'アイボリー';
@@ -181,10 +178,6 @@ class IdentificationScorer {
   }
 
   bool _matchesFruitApex(FruitApexAnswer answer, String? value) {
-    if (value == null) {
-      return false;
-    }
-
     switch (answer) {
       case FruitApexAnswer.pointed:
         return value == '尖っている';
@@ -204,29 +197,25 @@ class IdentificationScorer {
   }
 
   bool _matchesFruitLength(FruitLengthAnswer answer, double? min, double? max) {
-    if (answer == FruitLengthAnswer.short) {
-      return max != null && max <= 15;
-    }
+    switch (answer) {
+      case FruitLengthAnswer.short:
+        return max != null && max <= 15;
 
-    if (answer == FruitLengthAnswer.medium) {
-      return min != null && max != null && min <= 20 && max >= 16;
-    }
+      case FruitLengthAnswer.medium:
+        return min != null && max != null && min <= 20 && max >= 16;
 
-    if (answer == FruitLengthAnswer.long) {
-      return min != null && min >= 21;
-    }
+      case FruitLengthAnswer.long:
+        return min != null && min >= 21;
 
-    return false;
+      case FruitLengthAnswer.unknown:
+        return false;
+    }
   }
 
   bool _matchesTransverseSection(
     FruitTransverseSectionAnswer answer,
     String? value,
   ) {
-    if (value == null) {
-      return false;
-    }
-
     switch (answer) {
       case FruitTransverseSectionAnswer.round:
         return value == '丸い';
@@ -249,10 +238,6 @@ class IdentificationScorer {
     PeduncleHairinessAnswer answer,
     String? value,
   ) {
-    if (value == null) {
-      return false;
-    }
-
     switch (answer) {
       case PeduncleHairinessAnswer.hairless:
         return value == '無毛';
@@ -272,10 +257,6 @@ class IdentificationScorer {
   }
 
   bool _matchesSapColour(SapColourAnswer answer, String? value) {
-    if (value == null) {
-      return false;
-    }
-
     switch (answer) {
       case SapColourAnswer.milkyWhite:
         return value == '乳白色';
