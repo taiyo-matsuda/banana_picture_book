@@ -2,29 +2,28 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shadcn_flutter/shadcn_flutter.dart';
 
-import '../../models/identification_answer.dart';
-import '../../models/peel_colour.dart';
-import '../../repositories/identification_repository.dart';
-import '../../services/identification_session.dart';
+import '../models/identification_answer.dart';
+import '../models/pulp_colour.dart';
+import '../repositories/identification_repository.dart';
+import '../services/identification_session.dart';
 import 'widgets/identify/identify_answer_card.dart';
 import 'widgets/identify/identify_bottom_action.dart';
 import 'widgets/identify/identify_progress_header.dart';
 
-class IdentifyPeelScreen extends StatefulWidget {
-  const IdentifyPeelScreen({super.key});
+class IdentifyPulpScreen extends StatefulWidget {
+  const IdentifyPulpScreen({super.key});
 
   @override
-  State<IdentifyPeelScreen> createState() => _IdentifyPeelScreenState();
+  State<IdentifyPulpScreen> createState() => _IdentifyPulpScreenState();
 }
 
-class _IdentifyPeelScreenState extends State<IdentifyPeelScreen> {
+class _IdentifyPulpScreenState extends State<IdentifyPulpScreen> {
   final _repository = GetIt.instance<IdentificationRepository>();
-
   final _session = GetIt.instance<IdentificationSession>();
 
-  PeelColourAnswer? _selectedAnswer;
+  PulpColourAnswer? _selectedAnswer;
 
-  List<PeelColour> _peelColours = [];
+  List<PulpColour> _pulpColours = [];
 
   bool _isLoading = true;
   String? _errorMessage;
@@ -33,21 +32,21 @@ class _IdentifyPeelScreenState extends State<IdentifyPeelScreen> {
   void initState() {
     super.initState();
 
-    _selectedAnswer = _session.q2PeelColour;
+    _selectedAnswer = _session.q3PulpColour;
 
-    _loadPeelColours();
+    _loadPulpColours();
   }
 
-  Future<void> _loadPeelColours() async {
+  Future<void> _loadPulpColours() async {
     try {
-      final colours = await _repository.findPeelColours();
+      final colours = await _repository.findPulpColours();
 
       if (!mounted) {
         return;
       }
 
       setState(() {
-        _peelColours = colours;
+        _pulpColours = colours;
         _isLoading = false;
       });
     } catch (e) {
@@ -62,21 +61,23 @@ class _IdentifyPeelScreenState extends State<IdentifyPeelScreen> {
     }
   }
 
-  bool _hasYellow(List<PeelColour> colours) {
-    return colours.any(
-      (colour) => colour.value == '黄色' || colour.value == '鮮黄色',
-    );
+  bool _hasIvory(List<PulpColour> colours) {
+    return colours.any((colour) => colour.value == 'アイボリー');
   }
 
-  bool _hasOrange(List<PeelColour> colours) {
-    return colours.any((colour) => colour.value == 'オレンジ色');
+  bool _hasCream(List<PulpColour> colours) {
+    return colours.any((colour) => colour.value == 'クリーム色');
   }
 
-  bool _hasBlue(List<PeelColour> colours) {
-    return colours.any((colour) => colour.value == '青みがかった色');
+  bool _hasWhite(List<PulpColour> colours) {
+    return colours.any((colour) => colour.value == '白色');
   }
 
-  void _selectAnswer(PeelColourAnswer answer) {
+  bool _hasYellow(List<PulpColour> colours) {
+    return colours.any((colour) => colour.value == '黄色');
+  }
+
+  void _selectAnswer(PulpColourAnswer answer) {
     setState(() {
       _selectedAnswer = answer;
     });
@@ -87,9 +88,9 @@ class _IdentifyPeelScreenState extends State<IdentifyPeelScreen> {
       return;
     }
 
-    _session.q2PeelColour = _selectedAnswer;
+    _session.q3PulpColour = _selectedAnswer;
 
-    context.push('/identify/pulp');
+    context.push('/identify/fruit-apex');
   }
 
   @override
@@ -110,7 +111,7 @@ class _IdentifyPeelScreenState extends State<IdentifyPeelScreen> {
       child: SafeArea(
         child: Column(
           children: [
-            const IdentifyProgressHeader(currentStep: 2, totalSteps: 8),
+            const IdentifyProgressHeader(currentStep: 3, totalSteps: 8),
 
             Expanded(child: _buildContent()),
 
@@ -139,7 +140,7 @@ class _IdentifyPeelScreenState extends State<IdentifyPeelScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            '熟した果皮の色は何色ですか？',
+            '熟した果肉の色は何色ですか？',
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w700,
@@ -150,7 +151,7 @@ class _IdentifyPeelScreenState extends State<IdentifyPeelScreen> {
           const SizedBox(height: 12),
 
           const Text(
-            '熟したバナナの皮の色を選んでください。',
+            '熟したバナナの果肉の色を選んでください。',
             style: TextStyle(
               fontSize: 15,
               color: Color(0xFF71717A),
@@ -160,41 +161,51 @@ class _IdentifyPeelScreenState extends State<IdentifyPeelScreen> {
 
           const SizedBox(height: 32),
 
-          if (_hasYellow(_peelColours)) ...[
+          if (_hasIvory(_pulpColours)) ...[
             IdentifyAnswerCard(
-              title: '黄色 / 鮮黄色',
+              title: 'アイボリー',
+              subtitle: '熟すとアイボリー色になる',
+              selected: _selectedAnswer == PulpColourAnswer.ivory,
+              onTap: () => _selectAnswer(PulpColourAnswer.ivory),
+            ),
+            const SizedBox(height: 12),
+          ],
+
+          if (_hasCream(_pulpColours)) ...[
+            IdentifyAnswerCard(
+              title: 'クリーム色',
+              subtitle: '熟すとクリーム色になる',
+              selected: _selectedAnswer == PulpColourAnswer.cream,
+              onTap: () => _selectAnswer(PulpColourAnswer.cream),
+            ),
+            const SizedBox(height: 12),
+          ],
+
+          if (_hasWhite(_pulpColours)) ...[
+            IdentifyAnswerCard(
+              title: '白色',
+              subtitle: '熟すと白色になる',
+              selected: _selectedAnswer == PulpColourAnswer.white,
+              onTap: () => _selectAnswer(PulpColourAnswer.white),
+            ),
+            const SizedBox(height: 12),
+          ],
+
+          if (_hasYellow(_pulpColours)) ...[
+            IdentifyAnswerCard(
+              title: '黄色',
               subtitle: '熟すと黄色になる',
-              selected: _selectedAnswer == PeelColourAnswer.yellow,
-              onTap: () => _selectAnswer(PeelColourAnswer.yellow),
-            ),
-            const SizedBox(height: 12),
-          ],
-
-          if (_hasOrange(_peelColours)) ...[
-            IdentifyAnswerCard(
-              title: 'オレンジ色',
-              subtitle: '熟すとオレンジ色になる',
-              selected: _selectedAnswer == PeelColourAnswer.orange,
-              onTap: () => _selectAnswer(PeelColourAnswer.orange),
-            ),
-            const SizedBox(height: 12),
-          ],
-
-          if (_hasBlue(_peelColours)) ...[
-            IdentifyAnswerCard(
-              title: '青みがかった色',
-              subtitle: '熟しても青みが残る',
-              selected: _selectedAnswer == PeelColourAnswer.blue,
-              onTap: () => _selectAnswer(PeelColourAnswer.blue),
+              selected: _selectedAnswer == PulpColourAnswer.yellow,
+              onTap: () => _selectAnswer(PulpColourAnswer.yellow),
             ),
             const SizedBox(height: 12),
           ],
 
           IdentifyAnswerCard(
             title: '不明 / スキップ',
-            subtitle: '色が分からない場合',
-            selected: _selectedAnswer == PeelColourAnswer.unknown,
-            onTap: () => _selectAnswer(PeelColourAnswer.unknown),
+            subtitle: '果肉の色が分からない場合',
+            selected: _selectedAnswer == PulpColourAnswer.unknown,
+            onTap: () => _selectAnswer(PulpColourAnswer.unknown),
           ),
         ],
       ),

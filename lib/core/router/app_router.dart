@@ -5,6 +5,7 @@ import '../../screens/banana_detail_screen.dart';
 import '../../screens/banana_list_screen.dart';
 import '../../screens/identify_height_screen.dart';
 import '../../screens/identify_peel_screen.dart';
+import '../../screens/identify_pulp_screen.dart';
 import '../../screens/identify_screen.dart';
 import '../di/injection.dart';
 import 'main_shell.dart';
@@ -67,6 +68,12 @@ GoRouter createAppRouter() {
                     path: 'peel-colour',
                     builder: (context, state) {
                       return IdentifyPeelScreen();
+                    },
+                  ),
+                  GoRoute(
+                    path: 'pulp',
+                    builder: (context, state) {
+                      return const IdentifyPulpScreen();
                     },
                   ),
                 ],

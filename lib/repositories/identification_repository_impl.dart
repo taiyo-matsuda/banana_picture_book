@@ -4,6 +4,7 @@ import 'package:banana_picture_book/repositories/identification_repository.dart'
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/peel_colour.dart';
+import '../models/pulp_colour.dart';
 
 class IdentificationRepositoryImpl implements IdentificationRepository {
   IdentificationRepositoryImpl(this.supabase);
@@ -30,6 +31,18 @@ class IdentificationRepositoryImpl implements IdentificationRepository {
 
     return response.map<PeelColour>((data) {
       return PeelColour(value: data['mature_peel_colour'] as String);
+    }).toList();
+  }
+
+  @override
+  Future<List<PulpColour>> findPulpColours() async {
+    final response = await supabase
+        .from('fruits')
+        .select('pulp_colour_at_maturity')
+        .not('pulp_colour_at_maturity', 'is', null);
+
+    return response.map<PulpColour>((data) {
+      return PulpColour(value: data['pulp_colour_at_maturity'] as String);
     }).toList();
   }
 }
