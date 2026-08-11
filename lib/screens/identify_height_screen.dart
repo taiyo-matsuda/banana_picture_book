@@ -109,9 +109,7 @@ class _IdentifyHeightScreenState extends State<IdentifyHeightScreen> {
     if (_selectedAnswer == null) {
       return;
     }
-
-    debugPrint('Q1 answer: $_selectedAnswer');
-
+    _session.q1Height = _selectedAnswer;
     context.push('/identify/peel-colour');
   }
 

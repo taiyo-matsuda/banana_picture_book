@@ -87,9 +87,7 @@ class _IdentifyPulpScreenState extends State<IdentifyPulpScreen> {
     if (_selectedAnswer == null) {
       return;
     }
-
     _session.q3PulpColour = _selectedAnswer;
-
     context.push('/identify/fruit-apex');
   }
 

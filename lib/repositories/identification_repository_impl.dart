@@ -3,6 +3,7 @@ import 'package:banana_picture_book/models/plant_height.dart';
 import 'package:banana_picture_book/repositories/identification_repository.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../models/fruit_apex.dart';
 import '../models/peel_colour.dart';
 import '../models/pulp_colour.dart';
 
@@ -43,6 +44,18 @@ class IdentificationRepositoryImpl implements IdentificationRepository {
 
     return response.map<PulpColour>((data) {
       return PulpColour(value: data['pulp_colour_at_maturity'] as String);
+    }).toList();
+  }
+
+  @override
+  Future<List<FruitApex>> findFruitApexes() async {
+    final response = await supabase
+        .from('fruits')
+        .select('fruit_apex')
+        .not('fruit_apex', 'is', null);
+
+    return response.map<FruitApex>((data) {
+      return FruitApex(value: data['fruit_apex'] as String);
     }).toList();
   }
 }

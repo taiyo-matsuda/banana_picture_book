@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import '../../repositories/brief_banana_repository.dart';
 import '../../screens/banana_detail_screen.dart';
 import '../../screens/banana_list_screen.dart';
+import '../../screens/identify_fruit_apex_screen.dart';
 import '../../screens/identify_height_screen.dart';
 import '../../screens/identify_peel_screen.dart';
 import '../../screens/identify_pulp_screen.dart';
@@ -74,6 +75,12 @@ GoRouter createAppRouter() {
                     path: 'pulp',
                     builder: (context, state) {
                       return const IdentifyPulpScreen();
+                    },
+                  ),
+                  GoRoute(
+                    path: 'fruit-apex',
+                    builder: (context, state) {
+                      return const IdentifyFruitApexScreen();
                     },
                   ),
                 ],

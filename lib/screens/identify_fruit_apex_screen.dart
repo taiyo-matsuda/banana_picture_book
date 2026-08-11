@@ -2,29 +2,29 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shadcn_flutter/shadcn_flutter.dart';
 
-import '../../models/identification_answer.dart';
-import '../../models/peel_colour.dart';
-import '../../repositories/identification_repository.dart';
-import '../../services/identification_session.dart';
+import '../models/fruit_apex.dart';
+import '../models/identification_answer.dart';
+import '../repositories/identification_repository.dart';
+import '../services/identification_session.dart';
 import 'widgets/identify/identify_answer_card.dart';
 import 'widgets/identify/identify_bottom_action.dart';
 import 'widgets/identify/identify_progress_header.dart';
 
-class IdentifyPeelScreen extends StatefulWidget {
-  const IdentifyPeelScreen({super.key});
+class IdentifyFruitApexScreen extends StatefulWidget {
+  const IdentifyFruitApexScreen({super.key});
 
   @override
-  State<IdentifyPeelScreen> createState() => _IdentifyPeelScreenState();
+  State<IdentifyFruitApexScreen> createState() =>
+      _IdentifyFruitApexScreenState();
 }
 
-class _IdentifyPeelScreenState extends State<IdentifyPeelScreen> {
+class _IdentifyFruitApexScreenState extends State<IdentifyFruitApexScreen> {
   final _repository = GetIt.instance<IdentificationRepository>();
-
   final _session = GetIt.instance<IdentificationSession>();
 
-  PeelColourAnswer? _selectedAnswer;
+  FruitApexAnswer? _selectedAnswer;
 
-  List<PeelColour> _peelColours = [];
+  List<FruitApex> _fruitApexes = [];
 
   bool _isLoading = true;
   String? _errorMessage;
@@ -33,21 +33,21 @@ class _IdentifyPeelScreenState extends State<IdentifyPeelScreen> {
   void initState() {
     super.initState();
 
-    _selectedAnswer = _session.q2PeelColour;
+    _selectedAnswer = _session.q4FruitApex;
 
-    _loadPeelColours();
+    _loadFruitApexes();
   }
 
-  Future<void> _loadPeelColours() async {
+  Future<void> _loadFruitApexes() async {
     try {
-      final colours = await _repository.findPeelColours();
+      final fruitApexes = await _repository.findFruitApexes();
 
       if (!mounted) {
         return;
       }
 
       setState(() {
-        _peelColours = colours;
+        _fruitApexes = fruitApexes;
         _isLoading = false;
       });
     } catch (e) {
@@ -62,21 +62,23 @@ class _IdentifyPeelScreenState extends State<IdentifyPeelScreen> {
     }
   }
 
-  bool _hasYellow(List<PeelColour> colours) {
-    return colours.any(
-      (colour) => colour.value == '黄色' || colour.value == '鮮黄色',
-    );
+  bool _hasPointed(List<FruitApex> apexes) {
+    return apexes.any((apex) => apex.value == '尖っている');
   }
 
-  bool _hasOrange(List<PeelColour> colours) {
-    return colours.any((colour) => colour.value == 'オレンジ色');
+  bool _hasBottleNeck(List<FruitApex> apexes) {
+    return apexes.any((apex) => apex.value == '瓶の首状');
   }
 
-  bool _hasBlue(List<PeelColour> colours) {
-    return colours.any((colour) => colour.value == '青みがかった色');
+  bool _hasLongPointed(List<FruitApex> apexes) {
+    return apexes.any((apex) => apex.value == '細長く尖っている');
   }
 
-  void _selectAnswer(PeelColourAnswer answer) {
+  bool _hasBlunt(List<FruitApex> apexes) {
+    return apexes.any((apex) => apex.value == '鈍い先端');
+  }
+
+  void _selectAnswer(FruitApexAnswer answer) {
     setState(() {
       _selectedAnswer = answer;
     });
@@ -86,8 +88,10 @@ class _IdentifyPeelScreenState extends State<IdentifyPeelScreen> {
     if (_selectedAnswer == null) {
       return;
     }
-    _session.q2PeelColour = _selectedAnswer;
-    context.push('/identify/pulp');
+
+    _session.q4FruitApex = _selectedAnswer;
+
+    context.push('/identify/fruit-length');
   }
 
   @override
@@ -108,7 +112,7 @@ class _IdentifyPeelScreenState extends State<IdentifyPeelScreen> {
       child: SafeArea(
         child: Column(
           children: [
-            const IdentifyProgressHeader(currentStep: 2, totalSteps: 8),
+            const IdentifyProgressHeader(currentStep: 4, totalSteps: 8),
 
             Expanded(child: _buildContent()),
 
@@ -137,7 +141,7 @@ class _IdentifyPeelScreenState extends State<IdentifyPeelScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            '熟した果皮の色は何色ですか？',
+            '果実の先端はどのような形ですか？',
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w700,
@@ -148,7 +152,7 @@ class _IdentifyPeelScreenState extends State<IdentifyPeelScreen> {
           const SizedBox(height: 12),
 
           const Text(
-            '熟したバナナの皮の色を選んでください。',
+            'バナナの果実の先端の形を選んでください。',
             style: TextStyle(
               fontSize: 15,
               color: Color(0xFF71717A),
@@ -158,41 +162,51 @@ class _IdentifyPeelScreenState extends State<IdentifyPeelScreen> {
 
           const SizedBox(height: 32),
 
-          if (_hasYellow(_peelColours)) ...[
+          if (_hasPointed(_fruitApexes)) ...[
             IdentifyAnswerCard(
-              title: '黄色 / 鮮黄色',
-              subtitle: '熟すと黄色になる',
-              selected: _selectedAnswer == PeelColourAnswer.yellow,
-              onTap: () => _selectAnswer(PeelColourAnswer.yellow),
+              title: '尖っている',
+              subtitle: '先端が尖った形',
+              selected: _selectedAnswer == FruitApexAnswer.pointed,
+              onTap: () => _selectAnswer(FruitApexAnswer.pointed),
             ),
             const SizedBox(height: 12),
           ],
 
-          if (_hasOrange(_peelColours)) ...[
+          if (_hasBottleNeck(_fruitApexes)) ...[
             IdentifyAnswerCard(
-              title: 'オレンジ色',
-              subtitle: '熟すとオレンジ色になる',
-              selected: _selectedAnswer == PeelColourAnswer.orange,
-              onTap: () => _selectAnswer(PeelColourAnswer.orange),
+              title: '瓶の首状',
+              subtitle: '瓶の首のようにくびれた形',
+              selected: _selectedAnswer == FruitApexAnswer.bottleNeck,
+              onTap: () => _selectAnswer(FruitApexAnswer.bottleNeck),
             ),
             const SizedBox(height: 12),
           ],
 
-          if (_hasBlue(_peelColours)) ...[
+          if (_hasLongPointed(_fruitApexes)) ...[
             IdentifyAnswerCard(
-              title: '青みがかった色',
-              subtitle: '熟しても青みが残る',
-              selected: _selectedAnswer == PeelColourAnswer.blue,
-              onTap: () => _selectAnswer(PeelColourAnswer.blue),
+              title: '細長く尖っている',
+              subtitle: '細長く伸びた尖った形',
+              selected: _selectedAnswer == FruitApexAnswer.longPointed,
+              onTap: () => _selectAnswer(FruitApexAnswer.longPointed),
+            ),
+            const SizedBox(height: 12),
+          ],
+
+          if (_hasBlunt(_fruitApexes)) ...[
+            IdentifyAnswerCard(
+              title: '鈍い先端',
+              subtitle: '先端が丸みを帯びた形',
+              selected: _selectedAnswer == FruitApexAnswer.blunt,
+              onTap: () => _selectAnswer(FruitApexAnswer.blunt),
             ),
             const SizedBox(height: 12),
           ],
 
           IdentifyAnswerCard(
             title: '不明 / スキップ',
-            subtitle: '色が分からない場合',
-            selected: _selectedAnswer == PeelColourAnswer.unknown,
-            onTap: () => _selectAnswer(PeelColourAnswer.unknown),
+            subtitle: '果実の先端が分からない場合',
+            selected: _selectedAnswer == FruitApexAnswer.unknown,
+            onTap: () => _selectAnswer(FruitApexAnswer.unknown),
           ),
         ],
       ),
