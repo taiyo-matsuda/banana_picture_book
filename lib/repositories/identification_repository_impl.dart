@@ -4,6 +4,7 @@ import 'package:banana_picture_book/repositories/identification_repository.dart'
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/fruit_apex.dart';
+import '../models/fruit_length.dart';
 import '../models/peel_colour.dart';
 import '../models/pulp_colour.dart';
 
@@ -57,5 +58,16 @@ class IdentificationRepositoryImpl implements IdentificationRepository {
     return response.map<FruitApex>((data) {
       return FruitApex(value: data['fruit_apex'] as String);
     }).toList();
+  }
+
+  @override
+  Future<List<FruitLength>> findFruitLengths() async {
+    final response = await supabase
+        .from('fruits')
+        .select('fruit_length_min, fruit_length_max');
+
+    return response
+        .map<FruitLength>((data) => FruitLength.fromMap(data))
+        .toList();
   }
 }
