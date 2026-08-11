@@ -2,7 +2,7 @@ import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shadcn_flutter/shadcn_flutter.dart';
 
-import '../models/fruit_length.dart';
+import '../models/fruit_transverse_section.dart';
 import '../models/identification_answer.dart';
 import '../repositories/identification_repository.dart';
 import '../services/identification_session.dart';
@@ -10,22 +10,23 @@ import 'widgets/identify/identify_answer_card.dart';
 import 'widgets/identify/identify_bottom_action.dart';
 import 'widgets/identify/identify_progress_header.dart';
 
-class IdentifyFruitLengthScreen extends StatefulWidget {
-  const IdentifyFruitLengthScreen({super.key});
+class IdentifyFruitTransverseSectionScreen extends StatefulWidget {
+  const IdentifyFruitTransverseSectionScreen({super.key});
 
   @override
-  State<IdentifyFruitLengthScreen> createState() =>
-      _IdentifyFruitLengthScreenState();
+  State<IdentifyFruitTransverseSectionScreen> createState() =>
+      _IdentifyFruitTransverseSectionScreenState();
 }
 
-class _IdentifyFruitLengthScreenState extends State<IdentifyFruitLengthScreen> {
+class _IdentifyFruitTransverseSectionScreenState
+    extends State<IdentifyFruitTransverseSectionScreen> {
   final _repository = GetIt.instance<IdentificationRepository>();
 
   final _session = GetIt.instance<IdentificationSession>();
 
-  FruitLengthAnswer? _selectedAnswer;
+  FruitTransverseSectionAnswer? _selectedAnswer;
 
-  List<FruitLength> _fruitLengths = [];
+  List<FruitTransverseSection> _sections = [];
 
   bool _isLoading = true;
   String? _errorMessage;
@@ -34,21 +35,21 @@ class _IdentifyFruitLengthScreenState extends State<IdentifyFruitLengthScreen> {
   void initState() {
     super.initState();
 
-    _selectedAnswer = _session.q5FruitLength;
+    _selectedAnswer = _session.q6FruitTransverseSection;
 
-    _loadFruitLengths();
+    _loadSections();
   }
 
-  Future<void> _loadFruitLengths() async {
+  Future<void> _loadSections() async {
     try {
-      final fruitLengths = await _repository.findFruitLengths();
+      final sections = await _repository.findFruitTransverseSections();
 
       if (!mounted) {
         return;
       }
 
       setState(() {
-        _fruitLengths = fruitLengths;
+        _sections = sections;
         _isLoading = false;
       });
     } catch (e) {
@@ -63,25 +64,11 @@ class _IdentifyFruitLengthScreenState extends State<IdentifyFruitLengthScreen> {
     }
   }
 
-  bool _hasShortLength(List<FruitLength> lengths) {
-    return lengths.any((length) => length.max != null && length.max! <= 15);
+  bool _hasValue(String value) {
+    return _sections.any((section) => section.value == value);
   }
 
-  bool _hasMediumLength(List<FruitLength> lengths) {
-    return lengths.any(
-      (length) =>
-          length.min != null &&
-          length.max != null &&
-          length.min! <= 20 &&
-          length.max! >= 16,
-    );
-  }
-
-  bool _hasLongLength(List<FruitLength> lengths) {
-    return lengths.any((length) => length.min != null && length.min! >= 21);
-  }
-
-  void _selectAnswer(FruitLengthAnswer answer) {
+  void _selectAnswer(FruitTransverseSectionAnswer answer) {
     setState(() {
       _selectedAnswer = answer;
     });
@@ -92,9 +79,9 @@ class _IdentifyFruitLengthScreenState extends State<IdentifyFruitLengthScreen> {
       return;
     }
 
-    _session.q5FruitLength = _selectedAnswer;
+    _session.q6FruitTransverseSection = _selectedAnswer;
 
-    context.push('/identify/fruit-transverse-section');
+    context.push('/identify/fruit-axis-hair');
   }
 
   @override
@@ -115,7 +102,7 @@ class _IdentifyFruitLengthScreenState extends State<IdentifyFruitLengthScreen> {
       child: SafeArea(
         child: Column(
           children: [
-            const IdentifyProgressHeader(currentStep: 5, totalSteps: 8),
+            const IdentifyProgressHeader(currentStep: 6, totalSteps: 8),
 
             Expanded(child: _buildContent()),
 
@@ -144,7 +131,7 @@ class _IdentifyFruitLengthScreenState extends State<IdentifyFruitLengthScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            '果実の長さはどのくらいですか？',
+            '果実の断面はどのような形ですか？',
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.w700,
@@ -155,7 +142,7 @@ class _IdentifyFruitLengthScreenState extends State<IdentifyFruitLengthScreen> {
           const SizedBox(height: 12),
 
           const Text(
-            'バナナの果実のおおよその長さを選んでください。',
+            '果実を横に切ったときの断面の形を選んでください。',
             style: TextStyle(
               fontSize: 15,
               color: Color(0xFF71717A),
@@ -165,41 +152,59 @@ class _IdentifyFruitLengthScreenState extends State<IdentifyFruitLengthScreen> {
 
           const SizedBox(height: 32),
 
-          if (_hasShortLength(_fruitLengths)) ...[
+          if (_hasValue('丸い')) ...[
             IdentifyAnswerCard(
-              title: '15cm以下',
-              subtitle: '果実の長さが15cm以下',
-              selected: _selectedAnswer == FruitLengthAnswer.short,
-              onTap: () => _selectAnswer(FruitLengthAnswer.short),
+              title: '丸い',
+              subtitle: '断面が丸みを帯びている',
+              selected: _selectedAnswer == FruitTransverseSectionAnswer.round,
+              onTap: () => _selectAnswer(FruitTransverseSectionAnswer.round),
             ),
             const SizedBox(height: 12),
           ],
 
-          if (_hasMediumLength(_fruitLengths)) ...[
+          if (_hasValue('明瞭な稜')) ...[
             IdentifyAnswerCard(
-              title: '16〜20cm',
-              subtitle: '果実の長さが16〜20cm',
-              selected: _selectedAnswer == FruitLengthAnswer.medium,
-              onTap: () => _selectAnswer(FruitLengthAnswer.medium),
+              title: '明瞭な稜',
+              subtitle: '断面の稜がはっきりしている',
+              selected:
+                  _selectedAnswer ==
+                  FruitTransverseSectionAnswer.pronouncedRidges,
+              onTap: () =>
+                  _selectAnswer(FruitTransverseSectionAnswer.pronouncedRidges),
             ),
             const SizedBox(height: 12),
           ],
 
-          if (_hasLongLength(_fruitLengths)) ...[
+          if (_hasValue('やや稜状')) ...[
             IdentifyAnswerCard(
-              title: '21〜25cm',
-              subtitle: '果実の長さが21〜25cm',
-              selected: _selectedAnswer == FruitLengthAnswer.long,
-              onTap: () => _selectAnswer(FruitLengthAnswer.long),
+              title: 'やや稜状',
+              subtitle: '断面にやや稜がある',
+              selected:
+                  _selectedAnswer ==
+                  FruitTransverseSectionAnswer.slightlyRidged,
+              onTap: () =>
+                  _selectAnswer(FruitTransverseSectionAnswer.slightlyRidged),
+            ),
+            const SizedBox(height: 12),
+          ],
+
+          if (_hasValue('わずかに稜がある')) ...[
+            IdentifyAnswerCard(
+              title: 'わずかに稜がある',
+              subtitle: '断面にわずかな稜がある',
+              selected:
+                  _selectedAnswer == FruitTransverseSectionAnswer.faintRidges,
+              onTap: () =>
+                  _selectAnswer(FruitTransverseSectionAnswer.faintRidges),
             ),
             const SizedBox(height: 12),
           ],
 
           IdentifyAnswerCard(
             title: '不明 / スキップ',
-            subtitle: '果実の長さが分からない場合',
-            selected: _selectedAnswer == FruitLengthAnswer.unknown,
-            onTap: () => _selectAnswer(FruitLengthAnswer.unknown),
+            subtitle: '断面の形が分からない場合',
+            selected: _selectedAnswer == FruitTransverseSectionAnswer.unknown,
+            onTap: () => _selectAnswer(FruitTransverseSectionAnswer.unknown),
           ),
         ],
       ),

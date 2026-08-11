@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/fruit_apex.dart';
 import '../models/fruit_length.dart';
+import '../models/fruit_transverse_section.dart';
 import '../models/peel_colour.dart';
 import '../models/pulp_colour.dart';
 
@@ -68,6 +69,20 @@ class IdentificationRepositoryImpl implements IdentificationRepository {
 
     return response
         .map<FruitLength>((data) => FruitLength.fromMap(data))
+        .toList();
+  }
+
+  @override
+  Future<List<FruitTransverseSection>> findFruitTransverseSections() async {
+    final response = await supabase
+        .from('fruits')
+        .select('fruit_transverse_section')
+        .not('fruit_transverse_section', 'is', null);
+
+    return response
+        .map<FruitTransverseSection>(
+          (data) => FruitTransverseSection.fromMap(data),
+        )
         .toList();
   }
 }

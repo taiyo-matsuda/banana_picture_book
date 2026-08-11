@@ -5,6 +5,7 @@ import '../../screens/banana_detail_screen.dart';
 import '../../screens/banana_list_screen.dart';
 import '../../screens/identify_fruit_apex_screen.dart';
 import '../../screens/identify_fruit_length_screen.dart';
+import '../../screens/identify_fruit_transverse_section_screen.dart';
 import '../../screens/identify_height_screen.dart';
 import '../../screens/identify_peel_screen.dart';
 import '../../screens/identify_pulp_screen.dart';
@@ -88,6 +89,12 @@ GoRouter createAppRouter() {
                     path: 'fruit-length',
                     builder: (context, state) {
                       return const IdentifyFruitLengthScreen();
+                    },
+                  ),
+                  GoRoute(
+                    path: 'fruit-transverse-section',
+                    builder: (context, state) {
+                      return const IdentifyFruitTransverseSectionScreen();
                     },
                   ),
                 ],
