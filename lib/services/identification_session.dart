@@ -7,6 +7,7 @@ class IdentificationSession {
   FruitApexAnswer? q4FruitApex;
   FruitLengthAnswer? q5FruitLength;
   FruitTransverseSectionAnswer? q6FruitTransverseSection;
+  PeduncleHairinessAnswer? q7PeduncleHairiness;
 
   void reset() {
     q1Height = null;
@@ -14,5 +15,6 @@ class IdentificationSession {
     q3PulpColour = null;
     q4FruitApex = null;
     q5FruitLength = null;
+    q6FruitTransverseSection = null;
   }
 }

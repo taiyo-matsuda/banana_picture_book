@@ -15,3 +15,11 @@ enum FruitTransverseSectionAnswer {
   faintRidges,
   unknown,
 }
+
+enum PeduncleHairinessAnswer {
+  hairless,
+  veryHairyLong,
+  slightlyHairy,
+  veryHairyShort,
+  unknown,
+}

@@ -6,6 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/fruit_apex.dart';
 import '../models/fruit_length.dart';
 import '../models/fruit_transverse_section.dart';
+import '../models/peduncle_hairiness.dart';
 import '../models/peel_colour.dart';
 import '../models/pulp_colour.dart';
 
@@ -83,6 +84,18 @@ class IdentificationRepositoryImpl implements IdentificationRepository {
         .map<FruitTransverseSection>(
           (data) => FruitTransverseSection.fromMap(data),
         )
+        .toList();
+  }
+
+  @override
+  Future<List<PeduncleHairiness>> findPeduncleHairiness() async {
+    final response = await supabase
+        .from('inflorescence_male_buds')
+        .select('peduncle_hairiness')
+        .not('peduncle_hairiness', 'is', null);
+
+    return response
+        .map<PeduncleHairiness>((data) => PeduncleHairiness.fromMap(data))
         .toList();
   }
 }
